@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1440572578 source:c:\users\pparker\documents\overwatch-cpp\src\socketclient.cpp
+	"SocketClient.h"
+
+1440575794 c:\users\pparker\documents\overwatch-cpp\include\socketclient.h
+	<stdlib.h>
+
+1440573422 source:c:\users\pparker\documents\overwatch-cpp\src\main.cpp
+	<stdlib.h>
+	<stdio.h>
+	<iostream>
+	<SocketClient.h>
+
