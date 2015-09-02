@@ -1,10 +1,25 @@
-#include "VideoFeedClient.h"
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
-VideoFeedClient::VideoFeedClient(char *host, int port)
-: SocketClient(char *host, int port)
+#include <string>
+
+#include "include/SocketClient.h"
+#include "include/VideoFeedClient.h"
+
+VideoFeedClient::VideoFeedClient(char *host, int port, std::string token)
+    : SocketClient(host, port)
 {
     //ctor
 }
+
+/*VideoFeedClient::VideoFeedClient(struct sockaddr_in *receiver_addr)
+{
+    memcpy(serv_addr, receiver_addr, sizeof(*receiver_addr));
+
+    host = receiver_addr->sin_addr.sin_addr;
+    port = ntohs(receiver_addr->sin_port);
+}*/
 
 VideoFeedClient::~VideoFeedClient()
 {
@@ -25,6 +40,11 @@ int VideoFeedClient::connect_sock()
                        sizeof(serv_addr))) == 0)
     {
         connected = true;
+    }
+
+    if (res < 0)
+    {
+        throw new ConnectionError();
     }
 
     return res;

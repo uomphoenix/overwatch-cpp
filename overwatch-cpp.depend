@@ -11,3 +11,20 @@
 	<iostream>
 	<SocketClient.h>
 
+1441168050 source:e:\user files\git\overwatch-cpp\src\socketclient.cpp
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<netdb.h>
+	"SocketClient.h"
+
+1441168050 source:e:\user files\git\overwatch-cpp\src\main.cpp
+	<stdlib.h>
+	<stdio.h>
+	<iostream>
+	"SocketClient.h"
+

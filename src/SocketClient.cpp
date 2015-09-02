@@ -7,7 +7,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#include "SocketClient.h"
+#include <iostream>
+
+#include "include/SocketClient.h"
 
 SocketClient::SocketClient(char *host, int port)
 {
@@ -23,9 +25,15 @@ SocketClient::SocketClient(char *host, int port)
     serv_addr.sin_port = htons(port);
 }
 
-SocketClient::~SocketClient()
+SocketClient::SocketClient()
 {
 
+}
+
+SocketClient::~SocketClient()
+{
+    if (connected || sockfd > 0)
+        close(sockfd);
 }
 
 int SocketClient::send_bytes(char *bytes, size_t len)
@@ -52,3 +60,13 @@ int SocketClient::send_bytes(char *bytes, size_t len)
 
     return bytes_sent;
 }
+
+int SocketClient::read_bytes(char *buf, size_t len)
+{
+    int num_read = read(sockfd, buf, len);
+    if (num_read == -1)
+    {
+        perror("Error reading from socket");
+    }
+}
+
