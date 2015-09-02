@@ -14,12 +14,14 @@ class AuthenticationClient : public SocketClient
         AuthenticationClient(char *host, int port, std::string identifier);
 
         int connect_sock();
+        int send_bytes(char *bytes, size_t len);
         bool authenticate();
 
         struct sockaddr_in *get_receiver_addr();
         bool is_authenticated();
         std::string get_token();
         std::string get_receiver_host();
+        char *get_dyn_receiver_host();
         int get_receiver_port();
 
         virtual ~AuthenticationClient();

@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
@@ -10,7 +12,19 @@
 VideoFeedClient::VideoFeedClient(char *host, int port, std::string token)
     : SocketClient(host, port)
 {
-    //ctor
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+
+    // Bind the socket to a random port
+    struct sockaddr_in bind_addr;
+    memset((char *)&bind_addr, 0, sizeof(bind_addr));
+    bind_addr.sin_family = AF_INET;
+    bind_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    bind_addr.sin_port = htons(0);
+
+    if (bind(sockfd, (struct sockaddr *)&bind_addr, sizeof(bind_addr)) < 0)
+    {
+        throw new SocketBindError();
+    }
 }
 
 /*VideoFeedClient::VideoFeedClient(struct sockaddr_in *receiver_addr)
@@ -23,29 +37,21 @@ VideoFeedClient::VideoFeedClient(char *host, int port, std::string token)
 
 VideoFeedClient::~VideoFeedClient()
 {
-    //dtor
+
 }
 
 int VideoFeedClient::connect_sock()
 {
-    if (connected)
+
+}
+
+int VideoFeedClient::send_bytes(char *bytes, size_t len)
+{
+    int sent = 0;
+    if ((sent = sendto(sockfd, bytes, len, 0, (struct sockaddr *)&serv_addr, sizeof(serv_addr))) < 0)
     {
-        return -1;
+        throw new SocketSendError();
     }
 
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-
-    int res;
-    if ((res = connect(sockfd, (struct sockaddr *) &serv_addr,
-                       sizeof(serv_addr))) == 0)
-    {
-        connected = true;
-    }
-
-    if (res < 0)
-    {
-        throw new ConnectionError();
-    }
-
-    return res;
+    return sent;
 }

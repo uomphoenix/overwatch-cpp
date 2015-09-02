@@ -34,31 +34,12 @@ SocketClient::~SocketClient()
 {
     if (connected || sockfd > 0)
         close(sockfd);
-}
 
-int SocketClient::send_bytes(char *bytes, size_t len)
-{
-    if (!connected)
+    if (host != NULL)
     {
-        return -1;
+        free(host);
+        host = NULL;
     }
-
-    int rtn_size, bytes_sent = 0;
-
-    while (bytes_sent < len)
-    {
-        rtn_size = write(sockfd, bytes, len);
-
-        if (rtn_size == -1)
-        {
-            std::cout << "Error sending data via socket" << std::endl;
-            return -1;
-        }
-
-        bytes_sent += rtn_size;
-    }
-
-    return bytes_sent;
 }
 
 int SocketClient::read_bytes(char *buf, size_t len)

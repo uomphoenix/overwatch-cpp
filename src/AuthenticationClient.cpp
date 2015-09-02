@@ -10,6 +10,8 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 #include "include/AuthenticationClient.h"
 #include "include/SocketClient.h"
@@ -21,11 +23,13 @@ AuthenticationClient::AuthenticationClient(char *host, int port,
 {
     authenticated = false;
     this->identifier = identifier;
+
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
 }
 
 AuthenticationClient::~AuthenticationClient()
 {
-    //dtor
+
 }
 
 int AuthenticationClient::connect_sock()
@@ -34,8 +38,6 @@ int AuthenticationClient::connect_sock()
     {
         return -1;
     }
-
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     int res;
     if ((res = connect(sockfd, (struct sockaddr *) &serv_addr,
@@ -50,6 +52,31 @@ int AuthenticationClient::connect_sock()
     }
 
     return res;
+}
+
+int AuthenticationClient::send_bytes(char *bytes, size_t len)
+{
+    if (!connected)
+    {
+        return -1;
+    }
+
+    int rtn_size, bytes_sent = 0;
+
+    while (bytes_sent < len)
+    {
+        rtn_size = write(sockfd, bytes, len);
+
+        if (rtn_size == -1)
+        {
+            std::cout << "Error sending data via socket" << std::endl;
+            return -1;
+        }
+
+        bytes_sent += rtn_size;
+    }
+
+    return bytes_sent;
 }
 
 bool AuthenticationClient::authenticate()
@@ -68,13 +95,18 @@ bool AuthenticationClient::authenticate()
     */
     size_t request_len = identifier.length() + 3;
     char *request = (char *)malloc(request_len);
-
-    snprintf(request, request_len, "\x01\x00%s", identifier.c_str());
+    request[0] = '\x01';
+    request[1] = '\x00';
+    strncpy(request+2, identifier.c_str(), identifier.length());
     request[request_len] = '\x00';
 
     int sent = send_bytes(request, request_len);
+    std::cout << "ident: " << identifier << std::endl;
 
-    std::cout << "Sent auth request " << request << std::endl;
+    std::cout << "Sent auth request: ";
+    for (int i = 0; i < request_len; i++)
+        std::cout << (unsigned int)request[i] << " ";
+    std::cout << std::endl;
 
     free(request);
 
@@ -82,7 +114,10 @@ bool AuthenticationClient::authenticate()
     char *buffer = (char *)malloc(AUTH_RESPONSE_LEN);
     int response_len = read_bytes(buffer, AUTH_RESPONSE_LEN);
 
-    std::string response = std::string(buffer);
+    // Note that we force string to read response_len bytes into the string,
+    // otherwise it'll stop at the first \x00
+    std::string response = std::string(buffer, response_len);
+    std::cout << response << std::endl;
 
     free(buffer);
 
@@ -90,6 +125,8 @@ bool AuthenticationClient::authenticate()
 
     if (!tokenized.empty())
     {
+        for (int i = 0; i < tokenized.size(); i++)
+            std::cout << "tokenized at i = " << i << ": " << tokenized.at(i) << std::endl;
         token = tokenized.at(1);
         receiver_host = tokenized.at(2);
         receiver_port = atoi(tokenized.at(3).c_str());
@@ -133,6 +170,14 @@ std::string AuthenticationClient::get_token()
 std::string AuthenticationClient::get_receiver_host()
 {
     return receiver_host;
+}
+
+char *AuthenticationClient::get_dyn_receiver_host()
+{
+    char *host = (char *)malloc(receiver_host.length()+1);
+    strncpy(host, receiver_host.c_str(), receiver_host.length()+1);
+
+    return host;
 }
 
 int AuthenticationClient::get_receiver_port()
