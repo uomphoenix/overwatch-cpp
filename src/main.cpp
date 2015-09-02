@@ -1,6 +1,10 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
+
 #include <iostream>
+#include <sstream>
+#include <string>
 
 #include "include/AuthenticationClient.h"
 #include "include/VideoFeedClient.h"
@@ -8,13 +12,16 @@
 
 int main(int argc, char *argv[])
 {
-    std::cout << "hello" << std::endl;
 
-    char *ident = "TEST";
-    char *host = "192.168.101.129";
+
+    char *ident = (char *)malloc(128);
+    char *host = (char *)malloc(128);
+    strncpy(ident, "TEST", 128);
+    strncpy(host, "192.168.101.129", 128);
     int port = 56789;
 
-    AuthenticationClient *auth = new AuthenticationClient(host, port, ident);
+    VideoFeedClient *vclient = NULL;
+    AuthenticationClient *auth = new AuthenticationClient(host, port, std::string(ident));
 
     try
     {
@@ -25,16 +32,49 @@ int main(int argc, char *argv[])
         std::cout << "Unable to authenticate" << std::endl;
         return 1;
     }
+    catch (...)
+    {
+        std::cout << "Unknown error" << std::endl;
+        throw;
+    }
 
     if (auth->is_authenticated())
     {
-        VideoFeedClient *vclient = new VideoFeedClient(auth->get_receiver_host().c_str(),
-                                                       auth->get_receiver_port(),
-                                                       auth->get_token());
+        vclient = new VideoFeedClient(auth->get_dyn_receiver_host(),
+                                      auth->get_receiver_port(),
+                                      auth->get_token());
+
+        try
+        {
+            std::stringstream test;
+            test << auth->get_token();
+            test << '\x00';
+            test << 1 << '\x00' << 1 << '\x00' << 1 << '\x00';
+            test << "frame";
+
+            std::string _test = test.str();
+
+            char *to_send = (char *)malloc(_test.length()+1);
+            memcpy(to_send, _test.c_str(), _test.length()+1);
+
+            std::cout << "Sending frame... ";
+            for (int i = 0; i < _test.length(); i++)
+                std::cout << (int)_test.at(i) << " ";
+            std::cout << " done" << std::endl;
+
+            vclient->send_bytes(to_send, _test.length()+1);
+            std::cout << "Frame apparently sent" << std::endl;
+        }
+        catch (...)
+        {
+            throw;
+        }
     }
 
-
-
     getchar();
+
+    delete auth;
+    delete vclient;
+
     return 0;
 }
