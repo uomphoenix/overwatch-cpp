@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
 #include <string>
+
 
 #include "include/SocketClient.h"
 #include "include/VideoFeedClient.h"
@@ -24,20 +26,25 @@ VideoFeedClient::VideoFeedClient(char *host, int port, std::string token)
     if (bind(sockfd, (struct sockaddr *)&bind_addr, sizeof(bind_addr)) < 0)
     {
         throw new SocketBindError();
+        connected = true;
     }
 }
 
-/*VideoFeedClient::VideoFeedClient(struct sockaddr_in *receiver_addr)
+VideoFeedClient::VideoFeedClient(struct sockaddr_in *receiver_addr)
 {
-    memcpy(serv_addr, receiver_addr, sizeof(*receiver_addr));
+    memcpy(&serv_addr, receiver_addr, sizeof(*receiver_addr));
 
-    host = receiver_addr->sin_addr.sin_addr;
-    port = ntohs(receiver_addr->sin_port);
-}*/
+    //host = ntohl(receiver_addr->sin_addr.s_addr);
+    //port = ntohs(receiver_addr->sin_port);
+}
 
 VideoFeedClient::~VideoFeedClient()
 {
-
+    if (connected || sockfd >= 0)
+    {
+        close(sockfd);
+        sockfd = -1;
+    }
 }
 
 int VideoFeedClient::connect_sock()
@@ -55,3 +62,4 @@ int VideoFeedClient::send_bytes(char *bytes, size_t len)
 
     return sent;
 }
+

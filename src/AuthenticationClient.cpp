@@ -29,7 +29,11 @@ AuthenticationClient::AuthenticationClient(char *host, int port,
 
 AuthenticationClient::~AuthenticationClient()
 {
-
+    if (connected || sockfd >= 0)
+    {
+        close(sockfd);
+        sockfd = -1;
+    }
 }
 
 int AuthenticationClient::connect_sock()
@@ -145,6 +149,7 @@ bool AuthenticationClient::authenticate()
 
         close(sockfd);
         sockfd = -1;
+        connected = false;
 
         return true;
     }
