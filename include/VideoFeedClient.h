@@ -13,7 +13,7 @@ class VideoFeedClient : public SocketClient
 {
     public:
         VideoFeedClient(char *host, int port, std::string token);
-        //VideoFeedClient(struct sockaddr_in *receiver_addr);
+        VideoFeedClient(struct sockaddr_in *receiver_addr);
 
         int connect_sock();
         int send_bytes(char *bytes, size_t len);
