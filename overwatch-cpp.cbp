@@ -31,9 +31,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add directory="E:\User Files\Git\overwatch-cpp\include" />
+			<Add directory="3rdparty" />
 		</Compiler>
 		<Unit filename="Makefile" />
-		<Unit filename="Makefile.inc" />
 		<Unit filename="include\AuthenticationClient.h" />
 		<Unit filename="include\SocketClient.h" />
 		<Unit filename="include\VideoFeedClient.h" />

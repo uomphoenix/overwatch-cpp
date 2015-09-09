@@ -1,7 +1,10 @@
 SRC_DIR = src
 INC_DIR = include
 
-CONFIG = debug
+# Use pkgconfig to link opencv libs & give include path,
+# `pkg-config --cflags --libs opencv`
+CONFIG += debug link_pkgconfig
+PKGCONFIG += opencv
 TEMPLATE = app
 TARGET = overwatch
 DEPENDPATH += .
@@ -19,4 +22,7 @@ HEADERS += $${INC_DIR}/SocketClient.h \
     $${INC_DIR}/VideoFeedClient.h \
     $${INC_DIR}/util.h
 
-# LIBS +=
+# CFLAGS += -std=c++0x
+# Need raspicam & mmal libs for reading from Pi cam
+# -lmmal -lmmal_core
+LIBS += -lraspicam -lraspicam_cv
