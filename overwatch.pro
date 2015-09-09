@@ -12,6 +12,7 @@ INCLUDEPATH += $${INC_DIR}
 OBJECTS_DIR = obj
 
 SOURCES += $${SRC_DIR}/main.cpp \
+    $${SRC_DIR}/LeptonCamera.cpp \
     $${SRC_DIR}/AuthenticationClient.cpp \
     $${SRC_DIR}/VideoFeedClient.cpp \
     $${SRC_DIR}/SocketClient.cpp \
@@ -20,9 +21,10 @@ SOURCES += $${SRC_DIR}/main.cpp \
 HEADERS += $${INC_DIR}/SocketClient.h \
     $${INC_DIR}/AuthenticationClient.h \
     $${INC_DIR}/VideoFeedClient.h \
+    $${INC_DIR}/LeptonCamera.h \
     $${INC_DIR}/util.h
 
 # CFLAGS += -std=c++0x
 # Need raspicam & mmal libs for reading from Pi cam
 # -lmmal -lmmal_core
-LIBS += -lraspicam -lraspicam_cv
+# LIBS += -lraspicam -lraspicam_cv
