@@ -1,20 +1,28 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <sstream>
 #include <string>
 
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv/cv.h"
+
+#include "include/LeptonCamera.h"
+
 #include "include/AuthenticationClient.h"
 #include "include/VideoFeedClient.h"
 #include "include/SocketClient.h"
 
+#include "raspicam/raspicam_cv.h"
+
+
 int main(int argc, char *argv[])
 {
-
-
-    char *ident = (char *)malloc(128);
+    /*char *ident = (char *)malloc(128);
     char *host = (char *)malloc(128);
     strncpy(ident, "TEST", 128);
     strncpy(host, "192.168.101.129", 128);
@@ -74,7 +82,24 @@ int main(int argc, char *argv[])
     getchar();
 
     delete auth;
-    delete vclient;
+    delete vclient;*/
+
+    cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
+
+    while (true)
+    {
+        LeptonCamera *lep = new LeptonCamera();
+
+        cv::Mat frame(LeptonCamera::FrameWidth, LeptonCamera::FrameHeight, CV_16U);
+        std::cout << "getting frame" << std::endl;
+        lep->getFrame(&frame);
+
+        std::cout << "showing frame" << std::endl;
+        cv::imshow("Lepton", frame);
+
+        cv::waitKey(1);
+        //sleep(1);
+    }
 
     return 0;
 }
