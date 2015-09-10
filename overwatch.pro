@@ -3,7 +3,7 @@ INC_DIR = include
 
 # Use pkgconfig to link opencv libs & give include path,
 # `pkg-config --cflags --libs opencv`
-CONFIG += debug link_pkgconfig
+CONFIG += debug link_pkgconfig c++11
 PKGCONFIG += opencv
 TEMPLATE = app
 TARGET = overwatch
@@ -13,6 +13,8 @@ OBJECTS_DIR = obj
 
 SOURCES += $${SRC_DIR}/main.cpp \
     $${SRC_DIR}/LeptonCamera.cpp \
+    $${SRC_DIR}/LeptonCameraContainer.cpp \
+    $${SRC_DIR}/PiCameraContainer.cpp \
     $${SRC_DIR}/AuthenticationClient.cpp \
     $${SRC_DIR}/VideoFeedClient.cpp \
     $${SRC_DIR}/SocketClient.cpp \
@@ -22,9 +24,11 @@ HEADERS += $${INC_DIR}/SocketClient.h \
     $${INC_DIR}/AuthenticationClient.h \
     $${INC_DIR}/VideoFeedClient.h \
     $${INC_DIR}/LeptonCamera.h \
+    $${INC_DIR}/LeptonCameraContainer.h \
+    $${INC_DIR}/PiCameraContainer.h \
     $${INC_DIR}/util.h
 
 # CFLAGS += -std=c++0x
 # Need raspicam & mmal libs for reading from Pi cam
 # -lmmal -lmmal_core
-# LIBS += -lraspicam -lraspicam_cv
+LIBS += -lraspicam -lraspicam_cv

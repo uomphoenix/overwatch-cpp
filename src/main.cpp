@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <thread>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -85,17 +86,28 @@ int main(int argc, char *argv[])
     delete vclient;*/
 
     cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("PiCam", cv::WINDOW_AUTOSIZE);
+
+    LeptonCamera *lep = new LeptonCamera();
+    raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
+    std::cout << "Opening pi cam" << std::endl;
+
+    if (!picam->open())
+    {
+        return 0;
+    }
+
 
     while (true)
     {
-        LeptonCamera *lep = new LeptonCamera();
-
         cv::Mat frame(LeptonCamera::FrameWidth, LeptonCamera::FrameHeight, CV_16U);
         std::cout << "getting frame" << std::endl;
         lep->getFrame(&frame);
 
         std::cout << "showing frame" << std::endl;
         cv::imshow("Lepton", frame);
+
+
 
         cv::waitKey(1);
         //sleep(1);
