@@ -12,6 +12,9 @@ class PiCameraContainer : public CameraContainer
     public:
         PiCameraContainer();
         virtual ~PiCameraContainer();
+
+        virtual void run();
+        virtual cv::Mat *getLatestFrame();
     protected:
     private:
 };

@@ -13,6 +13,9 @@ class LeptonCameraContainer : public CameraContainer
     public:
         LeptonCameraContainer();
         virtual ~LeptonCameraContainer();
+
+        virtual void run();
+        virtual cv::Mat *getLatestFrame();
     protected:
     private:
 };

@@ -11,11 +11,11 @@ class CameraContainer
         CameraContainer();
         virtual ~CameraContainer();
 
-        virtual void run();
-        virtual Mat *getLatestFrame();
+        virtual void run() {};
+        virtual cv::Mat *getLatestFrame() {};
 
     protected:
-        Mat *latest_frame;
+        cv::Mat *latest_frame;
     private:
 };
 

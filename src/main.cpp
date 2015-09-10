@@ -92,10 +92,10 @@ int main(int argc, char *argv[])
     raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
     std::cout << "Opening pi cam" << std::endl;
 
-    if (!picam->open())
-    {
-        return 0;
-    }
+    //if (!picam->open())
+    //{
+    //    return 0;
+    //}
 
 
     while (true)

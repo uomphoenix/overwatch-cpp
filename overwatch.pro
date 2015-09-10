@@ -10,9 +10,11 @@ TARGET = overwatch
 DEPENDPATH += .
 INCLUDEPATH += $${INC_DIR}
 OBJECTS_DIR = obj
+QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += $${SRC_DIR}/main.cpp \
     $${SRC_DIR}/LeptonCamera.cpp \
+    $${SRC_DIR}/CameraContainer.cpp \
     $${SRC_DIR}/LeptonCameraContainer.cpp \
     $${SRC_DIR}/PiCameraContainer.cpp \
     $${SRC_DIR}/AuthenticationClient.cpp \
@@ -24,6 +26,7 @@ HEADERS += $${INC_DIR}/SocketClient.h \
     $${INC_DIR}/AuthenticationClient.h \
     $${INC_DIR}/VideoFeedClient.h \
     $${INC_DIR}/LeptonCamera.h \
+    $${INC_DIR}/CameraContainer.h \
     $${INC_DIR}/LeptonCameraContainer.h \
     $${INC_DIR}/PiCameraContainer.h \
     $${INC_DIR}/util.h

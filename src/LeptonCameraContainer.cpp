@@ -13,3 +13,13 @@ LeptonCameraContainer::~LeptonCameraContainer()
 {
     //dtor
 }
+
+void LeptonCameraContainer::run()
+{
+
+}
+
+cv::Mat *LeptonCameraContainer::getLatestFrame()
+{
+
+}
