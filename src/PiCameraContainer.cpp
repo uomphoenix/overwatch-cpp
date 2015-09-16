@@ -1,12 +1,10 @@
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv/cv.h"
 
-#include "PiCameraContainer.h"
+#include "include/PiCameraContainer.h"
 
-PiCameraContainer::PiCameraContainer()
+PiCameraContainer::PiCameraContainer(raspicam::RaspiCam_Cv *camera)
+    : CameraContainer()
 {
-    //ctor
+    this->camera = camera;
 }
 
 PiCameraContainer::~PiCameraContainer()
@@ -19,7 +17,7 @@ void PiCameraContainer::run()
 
 }
 
-cv::Mat *PiCameraContainer::getLatestFrame()
+void PiCameraContainer::getLatestFrame(cv::Mat *)
 {
     return NULL;
 }

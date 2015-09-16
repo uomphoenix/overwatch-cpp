@@ -5,19 +5,23 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv/cv.h"
 
-#include <CameraContainer.h>
+#include "include/CameraContainer.h"
 
+#include "include/LeptonCamera.h"
 
 class LeptonCameraContainer : public CameraContainer
 {
     public:
-        LeptonCameraContainer();
+        LeptonCameraContainer(LeptonCamera *);
         virtual ~LeptonCameraContainer();
 
-        virtual void run();
-        virtual cv::Mat *getLatestFrame();
+        virtual cv::Mat getLatestFrame();
+        virtual void getNextFrame();
     protected:
+
+
     private:
+        LeptonCamera *camera;
 };
 
 #endif // LEPTONCAMERACONTAINER_H

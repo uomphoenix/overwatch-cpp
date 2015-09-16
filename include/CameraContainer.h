@@ -5,17 +5,28 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv/cv.h"
 
+#include <ctime>
+
 class CameraContainer
 {
     public:
         CameraContainer();
         virtual ~CameraContainer();
 
-        virtual void run() {};
-        virtual cv::Mat *getLatestFrame() {};
+        void run();
+        void stop();
+        virtual cv::Mat getLatestFrame() {};
 
     protected:
+        virtual void getNextFrame() {};
+
+        cv::Mat *prev_frame;
+        std::time_t prev_ftime;
+
         cv::Mat *latest_frame;
+        std::time_t latest_ftime;
+
+        bool running;
     private:
 };
 
