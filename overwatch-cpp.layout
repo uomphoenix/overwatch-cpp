@@ -4,40 +4,58 @@
 	<File name="Makefile" open="0" top="0" tabpos="0">
 		<Cursor position="117" topLine="0" />
 	</File>
-	<File name="include\AuthenticationClient.h" open="1" top="0" tabpos="3">
+	<File name="include\AuthenticationClient.h" open="0" top="0" tabpos="3">
 		<Cursor position="631" topLine="0" />
 	</File>
-	<File name="include\LeptonCamera.h" open="1" top="0" tabpos="11">
-		<Cursor position="268" topLine="7" />
+	<File name="include\CameraContainer.h" open="1" top="0" tabpos="7">
+		<Cursor position="515" topLine="0" />
 	</File>
-	<File name="include\SocketClient.h" open="1" top="0" tabpos="7">
+	<File name="include\LeptonCamera.h" open="1" top="0" tabpos="3">
+		<Cursor position="270" topLine="0" />
+	</File>
+	<File name="include\LeptonCameraContainer.h" open="1" top="0" tabpos="5">
+		<Cursor position="583" topLine="0" />
+	</File>
+	<File name="include\PiCameraContainer.h" open="0" top="0" tabpos="0">
+		<Cursor position="410" topLine="0" />
+	</File>
+	<File name="include\SocketClient.h" open="0" top="0" tabpos="7">
 		<Cursor position="655" topLine="1" />
 	</File>
-	<File name="include\VideoFeedClient.h" open="1" top="0" tabpos="5">
-		<Cursor position="355" topLine="0" />
+	<File name="include\VideoFeedClient.h" open="1" top="0" tabpos="8">
+		<Cursor position="512" topLine="0" />
 	</File>
-	<File name="include\util.h" open="1" top="0" tabpos="9">
+	<File name="include\util.h" open="0" top="0" tabpos="9">
 		<Cursor position="286" topLine="0" />
 	</File>
-	<File name="overwatch.pro" open="1" top="0" tabpos="12">
-		<Cursor position="783" topLine="0" />
+	<File name="overwatch.pro" open="1" top="1" tabpos="10">
+		<Cursor position="234" topLine="0" />
 	</File>
-	<File name="src\AuthenticationClient.cpp" open="1" top="0" tabpos="2">
+	<File name="src\AuthenticationClient.cpp" open="0" top="0" tabpos="2">
 		<Cursor position="924" topLine="36" />
 	</File>
-	<File name="src\LeptonCamera.cpp" open="1" top="1" tabpos="10">
-		<Cursor position="2275" topLine="77" />
+	<File name="src\CameraContainer.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="91" topLine="0" />
 	</File>
-	<File name="src\SocketClient.cpp" open="1" top="0" tabpos="6">
+	<File name="src\LeptonCamera.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="3133" topLine="99" />
+	</File>
+	<File name="src\LeptonCameraContainer.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="564" topLine="0" />
+	</File>
+	<File name="src\PiCameraContainer.cpp" open="1" top="0" tabpos="11">
+		<Cursor position="2" topLine="0" />
+	</File>
+	<File name="src\SocketClient.cpp" open="0" top="0" tabpos="6">
 		<Cursor position="558" topLine="0" />
 	</File>
-	<File name="src\VideoFeedClient.cpp" open="1" top="0" tabpos="4">
-		<Cursor position="1048" topLine="21" />
+	<File name="src\VideoFeedClient.cpp" open="1" top="0" tabpos="9">
+		<Cursor position="1552" topLine="25" />
 	</File>
 	<File name="src\main.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="2249" topLine="61" />
+		<Cursor position="3001" topLine="84" />
 	</File>
-	<File name="src\util.cpp" open="1" top="0" tabpos="8">
+	<File name="src\util.cpp" open="0" top="0" tabpos="8">
 		<Cursor position="454" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>

@@ -35,13 +35,19 @@
 		</Compiler>
 		<Unit filename="Makefile" />
 		<Unit filename="include\AuthenticationClient.h" />
+		<Unit filename="include\CameraContainer.h" />
 		<Unit filename="include\LeptonCamera.h" />
+		<Unit filename="include\LeptonCameraContainer.h" />
+		<Unit filename="include\PiCameraContainer.h" />
 		<Unit filename="include\SocketClient.h" />
 		<Unit filename="include\VideoFeedClient.h" />
 		<Unit filename="include\util.h" />
 		<Unit filename="overwatch.pro" />
 		<Unit filename="src\AuthenticationClient.cpp" />
+		<Unit filename="src\CameraContainer.cpp" />
 		<Unit filename="src\LeptonCamera.cpp" />
+		<Unit filename="src\LeptonCameraContainer.cpp" />
+		<Unit filename="src\PiCameraContainer.cpp" />
 		<Unit filename="src\SocketClient.cpp" />
 		<Unit filename="src\VideoFeedClient.cpp" />
 		<Unit filename="src\main.cpp" />
