@@ -14,6 +14,8 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 
+#include <iostream>
+
 #include <QString>
 #include <QTextStream>
 #include <QThread>
@@ -185,9 +187,14 @@ bool LeptonCamera::getFrame(cv::Mat *frame)
     unsigned char *in = &result[0];
     unsigned short *out = &rawData[0];
 
+    unsigned short *fp;
+
     int _frame_stride = frame->step;
     for (int iRow = 0; iRow < FrameHeight; ++iRow) {
         in += 4;
+
+        fp = frame->ptr<unsigned short>(iRow);
+
         for (int iCol = 0; iCol < FrameWidth; ++iCol) {
             unsigned short value = in[0];
             value <<= 8;
@@ -200,7 +207,10 @@ bool LeptonCamera::getFrame(cv::Mat *frame)
             // Note that this is accessing the underlying data matrix, which
             // may not necessarily have 1:1 column stride length. Also this can
             // go nasty if we're reaching outside the memory allocated...
-            frame->data[iRow * _frame_stride + iCol] = value;
+            //if (value == 0)
+            //    std::cout << "have 0 value at coord " << iRow << ", " << iCol << std::endl;
+
+            fp[iCol] = value;
         }
     }
 

@@ -13,6 +13,11 @@
 
 #include "opencv2/highgui/highgui.hpp"
 
+#if DEBUG_LEPTON
+#include <list>
+#include <utility>
+#endif
+
 class LeptonCamera
 {
     public:
@@ -48,6 +53,10 @@ class LeptonCamera
         int fd;
         struct spi_ioc_transfer _tr;
         std::vector<unsigned char> tx;
+
+        #if DEBUG_LEPTON
+        std::list< std::pair<int, int> > sequence; // ...of packet #'s received from Lepton, for troubleshooting
+        #endif
 };
 
 class SPIUnitialisedError : public std::exception
