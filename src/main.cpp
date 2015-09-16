@@ -13,12 +13,13 @@
 #include "opencv/cv.h"
 
 #include "include/LeptonCamera.h"
+#include "include/LeptonCameraContainer.h"
 
 #include "include/AuthenticationClient.h"
 #include "include/VideoFeedClient.h"
 #include "include/SocketClient.h"
 
-#include "raspicam/raspicam_cv.h"
+//#include "raspicam/raspicam_cv.h"
 
 
 int main(int argc, char *argv[])
@@ -89,8 +90,14 @@ int main(int argc, char *argv[])
     cv::namedWindow("PiCam", cv::WINDOW_AUTOSIZE);
 
     LeptonCamera *lep = new LeptonCamera();
-    raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
-    std::cout << "Opening pi cam" << std::endl;
+    LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
+
+    #if HAVE_LEPTON
+    lep->initLepton();
+    #endif
+
+    //raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
+    //std::cout << "Opening pi cam" << std::endl;
 
     //if (!picam->open())
     //{
@@ -100,18 +107,37 @@ int main(int argc, char *argv[])
 
     while (true)
     {
-        cv::Mat frame(LeptonCamera::FrameWidth, LeptonCamera::FrameHeight, CV_16U);
+
         std::cout << "getting frame" << std::endl;
-        lep->getFrame(&frame);
+        lpc->getNextFrame();
+        cv::Mat frame = lpc->getLatestFrame();
 
-        std::cout << "showing frame" << std::endl;
+        //std::cout << "showing frame" << std::endl << tmp << std::endl;
+
         cv::imshow("Lepton", frame);
-
-
+        //cv::imshow("PiCam", tmp);
 
         cv::waitKey(1);
+        //break;
         //sleep(1);
     }
+
+    /*cv::Mat test(LeptonCamera::FrameHeight, LeptonCamera::FrameWidth, CV_16UC1);
+    unsigned short *p;
+
+    for (int i = 0; i < test.rows; ++i)
+    {
+        p = test.ptr<unsigned short>(i);
+
+        for (int j = 0; j < test.cols; ++j)
+        {
+            //p[j] = 5;
+            test.data[i*test.step +j] = 5;
+
+        }
+    }
+
+    std::cout << test << std::endl;*/
 
     return 0;
 }
