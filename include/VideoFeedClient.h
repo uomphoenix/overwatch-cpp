@@ -6,8 +6,9 @@
 
 #include <string>
 
-#include "include/SocketClient.h"
+#include "opencv2/imgproc.hpp"
 
+#include "include/SocketClient.h"
 
 class VideoFeedClient : public SocketClient
 {
@@ -17,6 +18,8 @@ class VideoFeedClient : public SocketClient
 
         int connect_sock();
         int send_bytes(char *bytes, size_t len);
+
+        void send_frame(cv::Mat *frame);
 
         virtual ~VideoFeedClient();
     protected:

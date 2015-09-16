@@ -63,3 +63,7 @@ int VideoFeedClient::send_bytes(char *bytes, size_t len)
     return sent;
 }
 
+void VideoFeedClient::send_frame(cv::Mat *frame)
+{
+
+}
