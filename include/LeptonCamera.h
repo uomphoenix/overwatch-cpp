@@ -11,7 +11,7 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 
-#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/highgui.hpp"
 
 #if DEBUG_LEPTON
 #include <list>
