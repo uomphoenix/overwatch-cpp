@@ -36,6 +36,7 @@
 		<Unit filename="Makefile" />
 		<Unit filename="include\AuthenticationClient.h" />
 		<Unit filename="include\CameraContainer.h" />
+		<Unit filename="include\Exception.h" />
 		<Unit filename="include\LeptonCamera.h" />
 		<Unit filename="include\LeptonCameraContainer.h" />
 		<Unit filename="include\PiCameraContainer.h" />
