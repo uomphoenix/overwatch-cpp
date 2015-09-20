@@ -8,23 +8,49 @@
 #include <string>
 #include <thread>
 
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv/cv.h"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/opencv.hpp"
 
 #include "include/LeptonCamera.h"
 #include "include/LeptonCameraContainer.h"
+
+#include "include/PiCameraContainer.h"
 
 #include "include/AuthenticationClient.h"
 #include "include/VideoFeedClient.h"
 #include "include/SocketClient.h"
 
-//#include "raspicam/raspicam_cv.h"
+#include "include/Exception.h"
 
+#include "raspicam/raspicam_cv.h"
+
+#define TEST_MODE true
+
+#ifdef TEST_MODE
+void test_sending();
+void test_lepton();
+void test_picam();
+#endif
 
 int main(int argc, char *argv[])
 {
-    /*char *ident = (char *)malloc(128);
+#ifdef TEST_MODE
+    // Run a test function
+    test_lepton();
+
+#else
+    // ACTUAL PROGRAM HERE
+
+
+#endif
+    return 0;
+}
+
+#ifdef TEST_MODE
+void test_sending()
+{
+    char *ident = (char *)malloc(128);
     char *host = (char *)malloc(128);
     strncpy(ident, "TEST", 128);
     strncpy(host, "192.168.101.129", 128);
@@ -40,7 +66,7 @@ int main(int argc, char *argv[])
     catch (ConnectionError ex)
     {
         std::cout << "Unable to authenticate" << std::endl;
-        return 1;
+        throw;
     }
     catch (...)
     {
@@ -84,26 +110,20 @@ int main(int argc, char *argv[])
     getchar();
 
     delete auth;
-    delete vclient;*/
+    delete vclient;
+}
 
+void test_lepton()
+{
     cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
-    cv::namedWindow("PiCam", cv::WINDOW_AUTOSIZE);
 
     LeptonCamera *lep = new LeptonCamera();
-    LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
 
     #if HAVE_LEPTON
     lep->initLepton();
     #endif
 
-    //raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
-    //std::cout << "Opening pi cam" << std::endl;
-
-    //if (!picam->open())
-    //{
-    //    return 0;
-    //}
-
+    LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
 
     while (true)
     {
@@ -115,29 +135,37 @@ int main(int argc, char *argv[])
         //std::cout << "showing frame" << std::endl << tmp << std::endl;
 
         cv::imshow("Lepton", frame);
-        //cv::imshow("PiCam", tmp);
 
         cv::waitKey(1);
-        //break;
-        //sleep(1);
     }
-
-    /*cv::Mat test(LeptonCamera::FrameHeight, LeptonCamera::FrameWidth, CV_16UC1);
-    unsigned short *p;
-
-    for (int i = 0; i < test.rows; ++i)
-    {
-        p = test.ptr<unsigned short>(i);
-
-        for (int j = 0; j < test.cols; ++j)
-        {
-            //p[j] = 5;
-            test.data[i*test.step +j] = 5;
-
-        }
-    }
-
-    std::cout << test << std::endl;*/
-
-    return 0;
 }
+
+void test_picam()
+{
+    cv::namedWindow("PiCam", cv::WINDOW_AUTOSIZE);
+
+    raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
+
+    std::cout << "Opening pi cam" << std::endl;
+
+    if (!picam->open())
+    {
+        throw new PiCamOpenError();
+    }
+
+    PiCameraContainer *pcc = new PiCameraContainer(picam);
+
+    while (true)
+    {
+        std::cout << "getting frame" << std::endl;
+        pcc->getNextFrame();
+        cv::Mat frame = pcc->getLatestFrame();
+
+        //std::cout << "showing frame" << std::endl << tmp << std::endl;
+
+        cv::imshow("PiCam", frame);
+
+        cv::waitKey(1);
+    }
+}
+#endif
