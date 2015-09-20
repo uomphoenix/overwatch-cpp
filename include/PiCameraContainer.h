@@ -5,7 +5,7 @@
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
-#include "opencv/cv.h"
+#include "opencv2/opencv.hpp"
 
 #include "raspicam/raspicam_cv.h"
 
@@ -15,9 +15,10 @@ class PiCameraContainer : public CameraContainer
         PiCameraContainer(raspicam::RaspiCam_Cv *);
         virtual ~PiCameraContainer();
 
-        virtual cv::Mat *getLatestFrame();
-    protected:
+        virtual cv::Mat getLatestFrame();
         virtual void getNextFrame();
+    protected:
+        cv::Mat latest_frame;
 
     private:
         raspicam::RaspiCam_Cv *camera;

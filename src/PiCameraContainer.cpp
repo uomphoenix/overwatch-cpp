@@ -12,12 +12,12 @@ PiCameraContainer::~PiCameraContainer()
     //dtor
 }
 
-void PiCameraContainer::run()
+void PiCameraContainer::getNextFrame()
 {
-
+    camera->retrieve(latest_frame);
 }
 
-void PiCameraContainer::getLatestFrame(cv::Mat *)
+cv::Mat PiCameraContainer::getLatestFrame()
 {
-    return NULL;
+    return latest_frame.clone();
 }
