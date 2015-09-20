@@ -1,6 +1,6 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
-#include "opencv/cv.h"
+#include "opencv2/opencv.hpp"
 
 #include "include/LeptonCameraContainer.h"
 
@@ -34,7 +34,6 @@ cv::Mat LeptonCameraContainer::getLatestFrame()
     // We need to return a newly allocated frame buffer in this method,
     // otherwise the thread running the camera capture will destroy
     // the data in the current pointer...
-    // NOTE: THE CALLER __MUST__ FREE THE POINTER, OTHERWISE MEMORY IS LEAKED
 
     return latest_frame->clone();
 }
