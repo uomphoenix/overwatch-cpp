@@ -18,7 +18,6 @@ class PiCameraContainer : public CameraContainer
         virtual cv::Mat getLatestFrame();
         virtual void getNextFrame();
     protected:
-        cv::Mat latest_frame;
 
     private:
         raspicam::RaspiCam_Cv *camera;

@@ -20,7 +20,7 @@ VideoFeedClient::VideoFeedClient(char *host, int port, std::string token)
 
     if (bind(sockfd, (struct sockaddr *)&bind_addr, sizeof(bind_addr)) < 0)
     {
-        throw new SocketBindError();
+        throw SocketBindError();
         connected = true;
     }
 
@@ -55,17 +55,19 @@ int VideoFeedClient::send_bytes(char *bytes, size_t len)
     int sent = 0;
     if ((sent = sendto(sockfd, bytes, len, 0, (struct sockaddr *)&serv_addr, sizeof(serv_addr))) < 0)
     {
-        throw new SocketSendError();
+        throw SocketSendError();
     }
 
     return sent;
 }
 
-void VideoFeedClient::send_frame(cv::Mat *frame)
+void VideoFeedClient::send_frame(cv::Mat& frame)
 {
     // We take a cv::Mat and encode it into JPEG. Then we send this frame in
     // chunks to the receiver. We want this to be as fast as possible...
-    cv::Mat encoded(*frame);
+    cv::Mat encoded(frame);
+
+
 
     std::vector<unsigned char> buf;
     std::vector<int> params;
@@ -74,12 +76,16 @@ void VideoFeedClient::send_frame(cv::Mat *frame)
 
     cv::imencode(std::string(".jpg"), encoded, buf, params);
 
+
     // FORMAT:
     // <challenge>\x00<seq num>\x00<max fragments>\x00<fragment num>\x00<frame>\x00
     std::stringstream frame_builder;
 
     unsigned int frame_size = encoded.total()*encoded.elemSize();
     int num_fragments = (int)ceil(1.*frame_size/MAX_FRAGMENT_SIZE);
+    for (unsigned int i = 0; i < frame_size; i++)
+        std::cout << i << ":" << (int)encoded.data[i] << " ";
+    std::cout << std::endl;
 
     // Buffer on the stack for optimisation!
     char frame_buffer[MAX_FRAGMENT_SIZE];
@@ -107,8 +113,8 @@ void VideoFeedClient::send_frame(cv::Mat *frame)
         // buffer.
         frame_buffer[end_index-curr_index] = '\x00';
 
-        std::cout << "Frame " << seq_id << "index range " << curr_index;
-        std::cout << " to" << end_index << ", fragment: " << i << std::endl;
+        std::cout << "Frame " << seq_id << " index range " << curr_index;
+        std::cout << " to " << end_index << ", fragment: " << i << std::endl;
 
         frame_builder << token;
         frame_builder << '\x00';
@@ -123,8 +129,8 @@ void VideoFeedClient::send_frame(cv::Mat *frame)
         memcpy(to_send, _bytes.c_str(), _bytes.length()+1);
 
         std::cout << "Sending frame... ";
-        for (int i = 0; i < _bytes.length(); i++)
-            std::cout << (int)_bytes.at(i) << " ";
+        for (unsigned int j = 0; j < _bytes.length(); j++)
+            std::cout << (int)_bytes.at(j) << " ";
         std::cout << " done" << std::endl;
 
         send_bytes(to_send, _bytes.length()+1);
@@ -133,6 +139,7 @@ void VideoFeedClient::send_frame(cv::Mat *frame)
         free(to_send);
 
         // Clear the buffer for the next fragment
+        frame_builder.str(std::string());
         frame_builder.clear();
 
         curr_index = end_index;

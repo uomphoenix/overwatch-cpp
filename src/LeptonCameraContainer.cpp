@@ -9,12 +9,12 @@ LeptonCameraContainer::LeptonCameraContainer(LeptonCamera *camera)
 {
     this->camera = camera;
 
-    latest_frame = new cv::Mat(LeptonCamera::FrameHeight, LeptonCamera::FrameWidth, CV_16UC1);
+    latest_frame = cv::Mat(LeptonCamera::FrameHeight, LeptonCamera::FrameWidth, CV_16UC1);
 }
 
 LeptonCameraContainer::~LeptonCameraContainer()
 {
-    delete latest_frame;
+
 }
 
 /**
@@ -35,5 +35,5 @@ cv::Mat LeptonCameraContainer::getLatestFrame()
     // otherwise the thread running the camera capture will destroy
     // the data in the current pointer...
 
-    return latest_frame->clone();
+    return latest_frame.clone();
 }

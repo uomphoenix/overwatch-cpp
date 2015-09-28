@@ -5,7 +5,6 @@ CameraContainer::CameraContainer()
     running = false;
 
     latest_ftime = 0;
-    prev_ftime = 0;
 }
 
 CameraContainer::~CameraContainer()

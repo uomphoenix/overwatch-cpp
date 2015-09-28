@@ -27,7 +27,7 @@ class LeptonCamera
         bool initLepton();
         int getPacket(int, unsigned char *);
 
-        bool getFrame(cv::Mat *);
+        bool getFrame(cv::Mat&);
 
         enum
         {

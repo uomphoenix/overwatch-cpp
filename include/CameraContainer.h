@@ -20,10 +20,7 @@ class CameraContainer
     protected:
         virtual void getNextFrame() {};
 
-        cv::Mat *prev_frame;
-        std::time_t prev_ftime;
-
-        cv::Mat *latest_frame;
+        cv::Mat latest_frame;
         std::time_t latest_ftime;
 
         bool running;

@@ -54,4 +54,12 @@ class SocketSendError : public std::exception
     }
 };
 
+class SocketReadError : public std::exception
+{
+    virtual const char *what() const throw()
+    {
+        return "Unable to read data from socket";
+    }
+};
+
 #endif // SOCKETCLIENT_H

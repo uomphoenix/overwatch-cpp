@@ -29,6 +29,7 @@
 
 #ifdef TEST_MODE
 void test_sending();
+void test_send_with_video();
 void test_lepton();
 void test_picam();
 #endif
@@ -36,8 +37,10 @@ void test_picam();
 int main(int argc, char *argv[])
 {
 #ifdef TEST_MODE
+    cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
     // Run a test function
-    test_lepton();
+    //test_lepton();
+    test_send_with_video();
 
 #else
     // ACTUAL PROGRAM HERE
@@ -113,10 +116,68 @@ void test_sending()
     delete vclient;
 }
 
+void test_send_with_video()
+{
+    char *ident = (char *)malloc(128);
+    char *host = (char *)malloc(128);
+    strncpy(ident, "TEST", 128);
+    strncpy(host, "192.168.101.129", 128);
+    int port = 56789;
+
+    VideoFeedClient *vclient = NULL;
+    AuthenticationClient *auth = new AuthenticationClient(host, port, std::string(ident));
+
+    try
+    {
+        auth->authenticate();
+    }
+    catch (ConnectionError& ex)
+    {
+        std::cout << "Unable to connect to Firefly server" << std::endl;
+        throw;
+    }
+    catch (...)
+    {
+        std::cout << "Unknown error" << std::endl;
+        throw;
+    }
+
+    if (auth->is_authenticated())
+    {
+        vclient = new VideoFeedClient(auth->get_dyn_receiver_host(),
+                                      auth->get_receiver_port(),
+                                      auth->get_token());
+
+        LeptonCamera *lep = new LeptonCamera();
+        LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
+
+        while (true)
+        {
+            #if HAVE_LEPTON
+            lep->initLepton();
+            #endif
+
+            while (true)
+            {
+                lpc->getNextFrame();
+                cv::Mat frame = lpc->getLatestFrame();
+                vclient->send_frame(frame);
+
+                cv::imshow("Lepton", frame);
+
+                cv::waitKey(1);
+            }
+        }
+    }
+
+    getchar();
+
+    delete auth;
+    delete vclient;
+}
+
 void test_lepton()
 {
-    cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
-
     LeptonCamera *lep = new LeptonCamera();
 
     #if HAVE_LEPTON
@@ -127,8 +188,6 @@ void test_lepton()
 
     while (true)
     {
-
-        std::cout << "getting frame" << std::endl;
         lpc->getNextFrame();
         cv::Mat frame = lpc->getLatestFrame();
 
@@ -150,7 +209,7 @@ void test_picam()
 
     if (!picam->open())
     {
-        throw new PiCamOpenError();
+        throw PiCamOpenError();
     }
 
     PiCameraContainer *pcc = new PiCameraContainer(picam);

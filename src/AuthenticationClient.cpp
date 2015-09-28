@@ -52,7 +52,7 @@ int AuthenticationClient::connect_sock()
 
     if (res < 0)
     {
-        throw new ConnectionError();
+        throw ConnectionError();
     }
 
     return res;
@@ -65,7 +65,8 @@ int AuthenticationClient::send_bytes(char *bytes, size_t len)
         return -1;
     }
 
-    int rtn_size, bytes_sent = 0;
+    int rtn_size = 0;
+    size_t bytes_sent = 0;
 
     while (bytes_sent < len)
     {
@@ -74,10 +75,10 @@ int AuthenticationClient::send_bytes(char *bytes, size_t len)
         if (rtn_size == -1)
         {
             std::cout << "Error sending data via socket" << std::endl;
-            return -1;
+            throw SocketSendError();
         }
 
-        bytes_sent += rtn_size;
+        bytes_sent += (unsigned int)rtn_size;
     }
 
     return bytes_sent;
@@ -104,11 +105,11 @@ bool AuthenticationClient::authenticate()
     strncpy(request+2, identifier.c_str(), identifier.length());
     request[request_len] = '\x00';
 
-    int sent = send_bytes(request, request_len);
+    send_bytes(request, request_len);
     std::cout << "ident: " << identifier << std::endl;
 
     std::cout << "Sent auth request: ";
-    for (int i = 0; i < request_len; i++)
+    for (unsigned int i = 0; i < request_len; i++)
         std::cout << (unsigned int)request[i] << " ";
     std::cout << std::endl;
 
@@ -129,7 +130,7 @@ bool AuthenticationClient::authenticate()
 
     if (!tokenized.empty())
     {
-        for (int i = 0; i < tokenized.size(); i++)
+        for (unsigned int i = 0; i < tokenized.size(); i++)
             std::cout << "tokenized at i = " << i << ": " << tokenized.at(i) << std::endl;
         token = tokenized.at(1);
         receiver_host = tokenized.at(2);

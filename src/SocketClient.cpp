@@ -23,6 +23,9 @@ SocketClient::SocketClient(char *host, int port)
           (char *) &serv_addr.sin_addr.s_addr,
           server->h_length);
     serv_addr.sin_port = htons(port);
+
+    connected = false;
+    sockfd = -1;
 }
 
 SocketClient::SocketClient()
@@ -48,6 +51,9 @@ int SocketClient::read_bytes(char *buf, size_t len)
     if (num_read == -1)
     {
         perror("Error reading from socket");
+        throw SocketReadError();
     }
+
+    return num_read;
 }
 

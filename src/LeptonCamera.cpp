@@ -95,12 +95,12 @@ int LeptonCamera::getPacket(int iRow, unsigned char *packetData)
 #endif
 }
 
-bool LeptonCamera::getFrame(cv::Mat *frame)
+bool LeptonCamera::getFrame(cv::Mat& frame)
 {
 #if HAVE_LEPTON
     if (!initialised)
     {
-        throw new SPIUnitialisedError();
+        throw SPIUnitialisedError();
     }
 
     usleep(250000);
@@ -189,11 +189,10 @@ bool LeptonCamera::getFrame(cv::Mat *frame)
 
     unsigned short *fp;
 
-    int _frame_stride = frame->step;
     for (int iRow = 0; iRow < FrameHeight; ++iRow) {
         in += 4;
 
-        fp = frame->ptr<unsigned short>(iRow);
+        fp = frame.ptr<unsigned short>(iRow);
 
         for (int iCol = 0; iCol < FrameWidth; ++iCol) {
             unsigned short value = in[0];
