@@ -161,7 +161,18 @@ void test_send_with_video()
             cv::Mat frame = lpc->getLatestFrame();
             vclient->send_frame(frame);
 
+            std::vector<unsigned char> buf;
+            std::vector<int> params;
+            params.push_back(CV_IMWRITE_JPEG_QUALITY);
+            params.push_back(80);
+
+            cv::imencode(std::string(".jpeg"), frame, buf, params);
+
+            cv::Mat dec = cv::imdecode(buf, -1);
+
+
             cv::imshow("Lepton", frame);
+            cv::imshow("Lepton2", dec);
 
             cv::waitKey(1);
 
