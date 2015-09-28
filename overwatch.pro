@@ -35,4 +35,4 @@ HEADERS += $${INC_DIR}/SocketClient.h \
 # CFLAGS += -std=c++0x
 # Need raspicam & mmal libs for reading from Pi cam
 # -lmmal -lmmal_core
-LIBS += -lraspicam -lraspicam_cv
+LIBS += -lraspicam_cv -lraspicam
