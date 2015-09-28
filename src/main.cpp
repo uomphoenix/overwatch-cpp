@@ -151,22 +151,21 @@ void test_send_with_video()
         LeptonCamera *lep = new LeptonCamera();
         LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
 
+        #if HAVE_LEPTON
+        lep->initLepton();
+        #endif
+
         while (true)
         {
-            #if HAVE_LEPTON
-            lep->initLepton();
-            #endif
+            lpc->getNextFrame();
+            cv::Mat frame = lpc->getLatestFrame();
+            vclient->send_frame(frame);
 
-            while (true)
-            {
-                lpc->getNextFrame();
-                cv::Mat frame = lpc->getLatestFrame();
-                vclient->send_frame(frame);
+            cv::imshow("Lepton", frame);
 
-                cv::imshow("Lepton", frame);
+            cv::waitKey(1);
 
-                cv::waitKey(1);
-            }
+//            break;
         }
     }
 
