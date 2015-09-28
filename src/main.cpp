@@ -32,6 +32,7 @@ void test_sending();
 void test_send_with_video();
 void test_lepton();
 void test_picam();
+void test_grayscale_jpg();
 #endif
 
 int main(int argc, char *argv[])
@@ -40,7 +41,10 @@ int main(int argc, char *argv[])
     cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
     // Run a test function
     //test_lepton();
-    test_send_with_video();
+    //test_send_with_video();
+
+    test_grayscale_jpg();
+
 
 #else
     // ACTUAL PROGRAM HERE
@@ -235,6 +239,33 @@ void test_picam()
         cv::imshow("PiCam", frame);
 
         cv::waitKey(1);
+    }
+}
+
+void test_grayscale_jpg()
+{
+    // Read file & convert it into JPEG.
+    cv::VideoCapture cap("./video/lepton_6.avi");
+
+    cv::Mat frame;
+    cv::Mat gray;
+    while (cap.read(frame))
+    {
+        std::vector<unsigned char> buf;
+        std::vector<int> params;
+        params.push_back(CV_IMWRITE_JPEG_QUALITY);
+        params.push_back(80);
+
+        cvtColor(frame, gray, CV_BGR2GRAY);
+
+        cv::imencode(std::string(".jpg"), gray, buf, params);
+
+        cv::Mat dec = cv::imdecode(buf, -1);
+
+
+        cv::imshow("Lepton", frame);
+        cv::imshow("Lepton2", dec);
+        cv::waitKey(3);
     }
 }
 #endif
