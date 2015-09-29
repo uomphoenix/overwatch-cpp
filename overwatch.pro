@@ -20,7 +20,8 @@ SOURCES += $${SRC_DIR}/main.cpp \
     $${SRC_DIR}/AuthenticationClient.cpp \
     $${SRC_DIR}/VideoFeedClient.cpp \
     $${SRC_DIR}/SocketClient.cpp \
-    $${SRC_DIR}/util.cpp
+    $${SRC_DIR}/util.cpp \
+    src/PanSharpen.cpp
 
 HEADERS += $${INC_DIR}/SocketClient.h \
     $${INC_DIR}/AuthenticationClient.h \
@@ -30,7 +31,8 @@ HEADERS += $${INC_DIR}/SocketClient.h \
     $${INC_DIR}/LeptonCameraContainer.h \
     $${INC_DIR}/PiCameraContainer.h \
     $${INC_DIR}/Exception.h \
-    $${INC_DIR}/util.h
+    $${INC_DIR}/util.h \
+    include/PanSharpen.h
 
 # CFLAGS += -std=c++0x
 # Need raspicam & mmal libs for reading from Pi cam
