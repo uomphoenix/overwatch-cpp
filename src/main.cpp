@@ -21,6 +21,8 @@
 #include "include/VideoFeedClient.h"
 #include "include/SocketClient.h"
 
+#include "include/PanSharpen.h"
+
 #include "include/Exception.h"
 
 #include "raspicam/raspicam_cv.h"
@@ -33,17 +35,19 @@ void test_send_with_video();
 void test_lepton();
 void test_picam();
 void test_grayscale_jpg();
+void test_pansharpen();
 #endif
 
 int main(int argc, char *argv[])
 {
 #ifdef TEST_MODE
-    cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
+    //cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
     // Run a test function
     //test_lepton();
     //test_send_with_video();
 
-    test_grayscale_jpg();
+    //test_grayscale_jpg();
+    test_pansharpen();
 
 
 #else
@@ -55,6 +59,13 @@ int main(int argc, char *argv[])
 }
 
 #ifdef TEST_MODE
+void test_pansharpen()
+{
+    cv::namedWindow("test", CV_WINDOW_AUTOSIZE);
+    PanSharpen ps;
+    ps.read_from_disk(std::string("/home/dcandy/Downloads/imax_rgb.jpg"));
+}
+
 void test_sending()
 {
     char *ident = (char *)malloc(128);
@@ -193,7 +204,6 @@ void test_send_with_video()
 void test_lepton()
 {
     LeptonCamera *lep = new LeptonCamera();
-
     #if HAVE_LEPTON
     lep->initLepton();
     #endif
