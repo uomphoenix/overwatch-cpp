@@ -61,9 +61,9 @@ int main(int argc, char *argv[])
 #ifdef TEST_MODE
 void test_pansharpen()
 {
-    cv::namedWindow("test", CV_WINDOW_AUTOSIZE);
+    //cv::namedWindow("test", CV_WINDOW_AUTOSIZE);
     PanSharpen ps;
-    ps.read_from_disk(std::string("/home/dcandy/Downloads/imax_rgb.jpg"));
+    ps.read_from_disk(std::string("imax"));
 }
 
 void test_sending()
