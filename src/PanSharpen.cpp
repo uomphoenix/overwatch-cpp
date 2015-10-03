@@ -15,6 +15,7 @@ void PanSharpen::read_from_disk(std::string filename)
 
     Mat rgb_image = imread(rgb_path);
     Mat thermal_image = imread(thermal_path,CV_LOAD_IMAGE_GRAYSCALE);
+    Mat visual_greyscale = imread(rgb_path,CV_LOAD_IMAGE_GRAYSCALE);
 
 
     if (rgb_image.empty() || thermal_image.empty())
@@ -33,9 +34,14 @@ void PanSharpen::read_from_disk(std::string filename)
     //imshow("test thermal", thermal_image);
 
 
-    Mat output;
+    Mat final_output;
+    Mat output_guided_filter;
     Mat output_coloured;
     Mat output_eps_1_higher;
+    Mat visual_blurred;
+    Mat unsharp_mask;
+    Mat grayscale_blurred;
+    Mat filter_plus_mak;
 
 
     //guided filter syntax
@@ -53,13 +59,15 @@ void PanSharpen::read_from_disk(std::string filename)
 
     int rad_input = 200;
     int eps_input = 1;
-
+    int kernel_size = 1;
+    int signmaX = 5;
     namedWindow("PS test");
 
 
     cvCreateTrackbar("radius","PS test",&rad_input,640);
     cvCreateTrackbar("epsilon","PS test",&eps_input,14);
-
+    cvCreateTrackbar("kernal size (radius)","PS test",&kernel_size,100);
+    cvCreateTrackbar("sigma X","PS test",&signmaX,14);
 
     while(1)
     {
@@ -74,19 +82,26 @@ void PanSharpen::read_from_disk(std::string filename)
         }
 
 
-        ximgproc::guidedFilter(rgb_image,thermal_image,output,rad_input,1.*eps_input,-1);
-        ximgproc::guidedFilter(rgb_image,thermal_image,output_eps_1_higher,rad_input,1.*eps_input+10,-1);
+        ximgproc::guidedFilter(rgb_image,thermal_image,output_guided_filter,rad_input,1.*eps_input,-1);
+        //ximgproc::guidedFilter(rgb_image,thermal_image,output_eps_1_higher,rad_input,1.*eps_input+10,-1);
 
-        output = 100*(output - output_eps_1_higher);
+        GaussianBlur(visual_greyscale, grayscale_blurred, Size(kernel_size*2+1,kernel_size*2+1), signmaX);
+        unsharp_mask = visual_greyscale - grayscale_blurred;
 
+        filter_plus_mak = output_guided_filter + unsharp_mask;
+
+
+        /*
         if(abs(mean(output)[0])<=1)
         {
             std::cout << "you got problems" << std::endl;
         }
+        */
 
-        applyColorMap(output, output_coloured, COLORMAP_JET );
+        applyColorMap(filter_plus_mak, final_output, COLORMAP_JET );
 
-        imshow("PS test", output_coloured);
+        imshow("before unsharp mask is added", output_guided_filter);
+        imshow("PS test", final_output);
 
         waitKey(66);
 
