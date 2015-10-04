@@ -6,10 +6,9 @@
 
 LeptonCameraContainer::LeptonCameraContainer(LeptonCamera *camera)
     : CameraContainer()
+    , latest_frame(LeptonCamera::FrameHeight, LeptonCamera::FrameWidth, CV_16UC1)
 {
     this->camera = camera;
-
-    latest_frame = cv::Mat(LeptonCamera::FrameHeight, LeptonCamera::FrameWidth, CV_16UC1);
 }
 
 LeptonCameraContainer::~LeptonCameraContainer()
@@ -24,7 +23,8 @@ LeptonCameraContainer::~LeptonCameraContainer()
 void LeptonCameraContainer::getNextFrame()
 {
     // Note that the data in latest_frame is never updated if getFrame returns
-    // false, so we're just returning the previous frame.
+    // false, so we're just returning the previous frame. This can occur if
+    // there's an error reading from the Lepton camera.
     if (camera->getFrame(latest_frame))
         latest_ftime = std::time(NULL);
 }
