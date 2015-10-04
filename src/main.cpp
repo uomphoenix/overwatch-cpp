@@ -38,8 +38,19 @@ void test_grayscale_jpg();
 void test_pansharpen();
 #endif
 
+char *ahost = NULL;
+int aport;
+
 int main(int argc, char *argv[])
 {
+    if (argc != 3)
+    {
+        std::cout << "Usage: " << argv[0] << " [auth ip] [auth port]" << std::endl;
+        return 1;
+    }
+    ahost = argv[1];
+    aport = atoi(argv[2]);
+
 #ifdef TEST_MODE
     //cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
     // Run a test function
@@ -69,13 +80,10 @@ void test_pansharpen()
 void test_sending()
 {
     char *ident = (char *)malloc(128);
-    char *host = (char *)malloc(128);
     strncpy(ident, "TEST", 128);
-    strncpy(host, "192.168.101.129", 128);
-    int port = 56789;
 
     VideoFeedClient *vclient = NULL;
-    AuthenticationClient *auth = new AuthenticationClient(host, port, std::string(ident));
+    AuthenticationClient *auth = new AuthenticationClient(ahost, aport, std::string(ident));
 
     try
     {
@@ -112,7 +120,7 @@ void test_sending()
             memcpy(to_send, _test.c_str(), _test.length()+1);
 
             std::cout << "Sending frame... ";
-            for (int i = 0; i < _test.length(); i++)
+            for (unsigned int i = 0; i < _test.length(); i++)
                 std::cout << (int)_test.at(i) << " ";
             std::cout << " done" << std::endl;
 
@@ -134,13 +142,10 @@ void test_sending()
 void test_send_with_video()
 {
     char *ident = (char *)malloc(128);
-    char *host = (char *)malloc(128);
     strncpy(ident, "TEST", 128);
-    strncpy(host, "192.168.101.129", 128);
-    int port = 56789;
 
     VideoFeedClient *vclient = NULL;
-    AuthenticationClient *auth = new AuthenticationClient(host, port, std::string(ident));
+    AuthenticationClient *auth = new AuthenticationClient(ahost, aport, std::string(ident));
 
     try
     {
@@ -172,18 +177,7 @@ void test_send_with_video()
             cv::Mat frame = lpc->getLatestFrame();
             vclient->send_frame(frame);
 
-            std::vector<unsigned char> buf;
-            std::vector<int> params;
-            params.push_back(CV_IMWRITE_JPEG_QUALITY);
-            params.push_back(80);
-
-            cv::imencode(std::string(".jpeg"), frame, buf, params);
-
-            cv::Mat dec = cv::imdecode(buf, -1);
-
-
             cv::imshow("Lepton", frame);
-            cv::imshow("Lepton2", dec);
 
             cv::waitKey(1);
 
