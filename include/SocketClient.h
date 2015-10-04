@@ -13,8 +13,8 @@ class SocketClient
         SocketClient();
         virtual ~SocketClient();
 
-        virtual int connect_sock() {};
-        virtual int send_bytes(char *, size_t) {};
+        virtual int connect_sock();
+        virtual int send_bytes(char *, size_t);
         int read_bytes(char *buf, size_t len);
 
     protected:

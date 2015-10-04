@@ -15,10 +15,10 @@ class CameraContainer
 
         void run();
         void stop();
-        virtual cv::Mat getLatestFrame() {};
+        virtual cv::Mat getLatestFrame();
 
     protected:
-        virtual void getNextFrame() {};
+        virtual void getNextFrame();
 
         cv::Mat latest_frame;
         std::time_t latest_ftime;
