@@ -135,13 +135,13 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
 
         if (packetNumber==-1) {
             usleep(1000);
-            errors++;
-            return false;
+            if (++errors > 300) break;
+            continue;
         }
 
         if (packetNumber != iRow) {
             usleep(1000);
-            return false;
+            break;
         }
 
         ++iRow;
@@ -170,9 +170,9 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
         if (iSeq->second!=1) { os << "^" << iSeq->second; chain = false; }
     }
     if (chain && chain1!=chain0) os << "-" << chain1;
-    std::cout << os << std::endl;
+    std::cout << os.str() << std::endl;
     sequence.clear();
-    // std::cout << resets << "resets," << errors << "errors";
+    std::cout << resets << " resets, " << errors << " errors";
 #endif
 
     resets = 0; errors = 0;
