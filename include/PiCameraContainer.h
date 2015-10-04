@@ -9,6 +9,9 @@
 
 #include "raspicam/raspicam_cv.h"
 
+#define PICAM_FRAME_WIDTH 640
+#define PICAM_FRAME_HEIGHT 480
+
 class PiCameraContainer : public CameraContainer
 {
     public:

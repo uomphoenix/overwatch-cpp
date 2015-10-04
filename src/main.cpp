@@ -45,9 +45,10 @@ int main(int argc, char *argv[])
     // Run a test function
     //test_lepton();
     //test_send_with_video();
+    test_lepton();
 
     //test_grayscale_jpg();
-    test_pansharpen();
+    //test_pansharpen();
 
 
 #else
@@ -228,6 +229,9 @@ void test_picam()
     cv::namedWindow("PiCam", cv::WINDOW_AUTOSIZE);
 
     raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
+    picam->set(CV_CAP_PROP_FORMAT, CV_8UC3);
+    picam->set(CV_CAP_PROP_FRAME_WIDTH, PICAM_FRAME_WIDTH);
+    picam->set(CV_CAP_PROP_FRAME_HEIGHT, PICAM_FRAME_HEIGHT);
 
     std::cout << "Opening pi cam" << std::endl;
 
