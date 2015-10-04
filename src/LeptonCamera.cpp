@@ -38,12 +38,14 @@ LeptonCamera::LeptonCamera()
     speed = 16000000;
     delay = 0;
 
-    //result = new vector<unsigned char>(RowPacketBytes*FrameHeight);
-    //rawdata = new vector<unsigned short>(FrameWords);
-
-    //tx = new vector<unsigned char>(RowPacketBytes, 0);
-
     initialised = false;
+
+    #if HAVE_LEPTON
+    if (initLepton())
+    {
+        std::cout << "Successfully initialized the Lepton SPI interface" << std::endl;
+    }
+    #endif
 }
 
 LeptonCamera::~LeptonCamera()
