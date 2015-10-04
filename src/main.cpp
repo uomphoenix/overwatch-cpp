@@ -45,10 +45,9 @@ int main(int argc, char *argv[])
     // Run a test function
     //test_lepton();
     //test_send_with_video();
-    test_lepton();
 
     //test_grayscale_jpg();
-    //test_pansharpen();
+    test_pansharpen();
 
 
 #else
@@ -167,10 +166,6 @@ void test_send_with_video()
         LeptonCamera *lep = new LeptonCamera();
         LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
 
-        #if HAVE_LEPTON
-        lep->initLepton();
-        #endif
-
         while (true)
         {
             lpc->getNextFrame();
@@ -205,9 +200,6 @@ void test_send_with_video()
 void test_lepton()
 {
     LeptonCamera *lep = new LeptonCamera();
-    #if HAVE_LEPTON
-    lep->initLepton();
-    #endif
 
     LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
 
@@ -241,6 +233,12 @@ void test_picam()
     }
 
     PiCameraContainer *pcc = new PiCameraContainer(picam);
+    sleep(1);
+
+    time_t start, curr;
+    time(&start);
+
+    unsigned int frames = 0;
 
     while (true)
     {
@@ -248,11 +246,13 @@ void test_picam()
         pcc->getNextFrame();
         cv::Mat frame = pcc->getLatestFrame();
 
-        //std::cout << "showing frame" << std::endl << tmp << std::endl;
+        time(&curr);
 
         cv::imshow("PiCam", frame);
 
         cv::waitKey(1);
+
+        std::cout << "PiCam frame rate: " << 1.0*frames/difftime(curr, start) << std::endl;
     }
 }
 
