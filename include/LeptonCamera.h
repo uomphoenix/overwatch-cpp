@@ -2,7 +2,7 @@
 #define LEPTONCAMERA_H
 
 #define HAVE_LEPTON false
-#define DEBUG_LEPTON false
+#define DEBUG_LEPTON true
 
 #include <stdlib.h>
 #include <vector>

@@ -15,6 +15,7 @@
 #include <linux/spi/spidev.h>
 
 #include <iostream>
+#include <sstream>
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -158,8 +159,7 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
     }
 
 #if DEBUG_LEPTON
-    QString msg;
-    QTextStream os(&msg);
+    std::stringstream os;
     bool chain = false, first = true; int chain0, chain1;
     for (std::list< std::pair<int, int> >::iterator iSeq = sequence.begin(); iSeq != sequence.end(); ++iSeq) {
         if (chain && iSeq->first==chain1+1) { ++chain1; continue; }
@@ -170,7 +170,7 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
         if (iSeq->second!=1) { os << "^" << iSeq->second; chain = false; }
     }
     if (chain && chain1!=chain0) os << "-" << chain1;
-    std::cout << msg << std::endl;
+    std::cout << os << std::endl;
     sequence.clear();
     // std::cout << resets << "resets," << errors << "errors";
 #endif
