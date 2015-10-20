@@ -11,7 +11,7 @@ TARGET = overwatch
 DEPENDPATH += .
 INCLUDEPATH += $${INC_DIR}
 OBJECTS_DIR = obj
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -pthread
 
 SOURCES += $${SRC_DIR}/main.cpp \
     $${SRC_DIR}/LeptonCamera.cpp \
