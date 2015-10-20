@@ -5,10 +5,10 @@
 		<Cursor position="117" topLine="0" />
 	</File>
 	<File name="include\AuthenticationClient.h" open="1" top="0" tabpos="9">
-		<Cursor position="867" topLine="0" />
+		<Cursor position="668" topLine="0" />
 	</File>
 	<File name="include\CameraContainer.h" open="1" top="0" tabpos="14">
-		<Cursor position="563" topLine="0" />
+		<Cursor position="277" topLine="0" />
 	</File>
 	<File name="include\Exception.h" open="0" top="0" tabpos="0">
 		<Cursor position="66" topLine="0" />
@@ -25,8 +25,8 @@
 	<File name="include\PiCameraContainer.h" open="1" top="0" tabpos="12">
 		<Cursor position="295" topLine="0" />
 	</File>
-	<File name="include\SocketClient.h" open="0" top="0" tabpos="10">
-		<Cursor position="303" topLine="0" />
+	<File name="include\SocketClient.h" open="1" top="0" tabpos="16">
+		<Cursor position="492" topLine="3" />
 	</File>
 	<File name="include\VideoFeedClient.h" open="1" top="0" tabpos="7">
 		<Cursor position="587" topLine="0" />
@@ -44,7 +44,7 @@
 		<Cursor position="268" topLine="0" />
 	</File>
 	<File name="src\LeptonCamera.cpp" open="1" top="1" tabpos="2">
-		<Cursor position="3982" topLine="137" />
+		<Cursor position="5431" topLine="170" />
 	</File>
 	<File name="src\LeptonCameraContainer.cpp" open="1" top="0" tabpos="4">
 		<Cursor position="313" topLine="0" />
@@ -55,8 +55,8 @@
 	<File name="src\PiCameraContainer.cpp" open="0" top="0" tabpos="8">
 		<Cursor position="333" topLine="0" />
 	</File>
-	<File name="src\SocketClient.cpp" open="0" top="0" tabpos="9">
-		<Cursor position="1235" topLine="25" />
+	<File name="src\SocketClient.cpp" open="1" top="0" tabpos="15">
+		<Cursor position="799" topLine="0" />
 	</File>
 	<File name="src\VideoFeedClient.cpp" open="1" top="0" tabpos="6">
 		<Cursor position="1172" topLine="17" />
