@@ -1,13 +1,21 @@
+#include <assert.h>
+
 #include "include/PanSharpen.h"
 
 using namespace cv;
 
-PanSharpen::PanSharpen()
+PanSharpen::PanSharpen(int radius, double epsilon)
 {
+    assert(epsilon > 0);
+    assert(radius > 0);
+
+    this->radius = radius;
+    this->epsilon = epsilon;
 }
 
 void PanSharpen::read_from_disk(std::string filename)
 {
+    namedWindow("PS test");
 
     std::string rgb_path = "/home/dcandy/Downloads/" + filename + "_rgb.jpg";
     std::string thermal_path = "/home/dcandy/Downloads/" + filename + "_thermal_smoothed.jpg";
@@ -24,112 +32,39 @@ void PanSharpen::read_from_disk(std::string filename)
         return;
     }
 
+    Mat sharpened;
+    sharpen(thermal, visual, sharpened);
 
-
-    //std::cout << thermal_image.size() << std::endl;
-
-
-
-    //imshow("test rgb", rgb_image);
-    //imshow("test thermal", thermal_image);
-
-
-    Mat final_output;
-    Mat output_guided_filter;
-    Mat output_coloured;
-    Mat output_eps_1_higher;
-    Mat visual_blurred;
-    Mat unsharp_mask;
-    Mat grayscale_blurred;
-    Mat filter_plus_mak;
-    Mat std_filtered_image;
-
-
-    //guided filter syntax
-    //C++: void guidedFilter(InputArray guide, InputArray src, OutputArray dst, int radius, double eps, int dDepth=-1)
-
-    //ximgproc::guidedFilter(rgb_image,thermal_image,output,20,1,-1);
-
-    //imshow("test pan sharpen 1", output);
-
-
-    //ximgproc::guidedFilter(rgb_image,thermal_image,output,20,1000,-1);
-
-    //imshow("test pan sharpen 2", output);
-
-
-    int rad_input = 200;
-    int eps_input = 1;
-    int kernel_size = 1;
-    int signmaX = 5;
-    namedWindow("PS test");
-
-
-    cvCreateTrackbar("radius","PS test",&rad_input,640);
-    cvCreateTrackbar("epsilon","PS test",&eps_input,14);
-    cvCreateTrackbar("kernal size (radius)","PS test",&kernel_size,100);
-    cvCreateTrackbar("sigma X","PS test",&signmaX,14);
-
-    while(1)
-    {
-        if(eps_input==0)
-        {
-            eps_input = 1;
-        }
-
-        if(rad_input==0)
-        {
-            rad_input = 1;
-        }
-
-
-        ximgproc::guidedFilter(rgb_image,thermal_image,output_guided_filter,rad_input,1.*eps_input,-1);
-
-        std_filtered_image = std_deviation_filter(visual_greyscale);
-
-        filter_plus_mak = output_guided_filter + std_filtered_image;
-
-        //ximgproc::guidedFilter(rgb_image,thermal_image,output_eps_1_higher,rad_input,1.*eps_input+10,-1);
-
-        /*
-        GaussianBlur(visual_greyscale, grayscale_blurred, Size(kernel_size*2+1,kernel_size*2+1), signmaX);
-        unsharp_mask = visual_greyscale - grayscale_blurred;
-        filter_plus_mak = output_guided_filter + unsharp_mask;
-        */
-
-        /*
-        if(abs(mean(output)[0])<=1)
-        {
-            std::cout << "you got problems" << std::endl;
-        }
-        */
-
-        applyColorMap(filter_plus_mak, final_output, COLORMAP_JET );
-
-        //imshow("before unsharp mask is added", output_guided_filter);
-        imshow("PS test", final_output);
-
-        waitKey(66);
-
-    }
-
-
-    //std::cout << output << std::endl;
-
-
-    //cv::ximgproc::guidedFilter(InputArray guide, InputArray src, OutputArray dst, int radius, double eps, int dDepth=-1);
+    imshow("PS Test", sharpened);
 
     waitKey(0);
 
 }
 
-
-Mat PanSharpen::std_deviation_filter(Mat input)
+void PanSharpen::sharpen(Mat& thermal, Mat& visual, Mat &output)
 {
+    Mat output_guided_filter;
+    Mat filter_plus_mak;
+    Mat std_filtered_image;
 
+    ximgproc::guidedFilter(visual,thermal, output_guided_filter, radius,
+                           epsilon, -1);
+
+    Mat visual_grayscale;
+    cvtColor(visual, visual_grayscale, CV_RGB2GRAY);
+
+    std_deviation_filter(visual_greyscale, std_filtered_image);
+
+    filter_plus_mak = output_guided_filter + std_filtered_image;
+
+    applyColorMap(filter_plus_mak, output, COLORMAP_JET);
+}
+
+
+void PanSharpen::std_deviation_filter(Mat& input, Mat& output)
+{
     Mat input_as_double;
     Mat output_as_double;
-    Mat output;
     Mat c1;
     Mat c2;
     Mat no_negatives;
@@ -139,10 +74,6 @@ Mat PanSharpen::std_deviation_filter(Mat input)
     Mat kernel = Mat::ones(3, 3, CV_64F);  //32F might need to change
     int n = 9;
     double n1 = n-1;
-
-
-
-
 
     input.convertTo(input_as_double,CV_64F);
 
@@ -163,16 +94,11 @@ Mat PanSharpen::std_deviation_filter(Mat input)
 
     cv::sqrt(difference,output_as_double);
 
-    output_as_double.convertTo(output,CV_8UC3);
-
-
-
+    output_as_double.convertTo(output, CV_8UC3);
 
     /*
     //Rect roi(1, 1, 5, 5);
     //Mat roi_1 = output(roi);
     //std::cout << roi_1 << std::endl;
     */
-    return output;
-
 }

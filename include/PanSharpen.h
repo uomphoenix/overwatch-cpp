@@ -14,7 +14,15 @@ class PanSharpen
 public:
     PanSharpen();
     void read_from_disk(std::string filename);
-    cv::Mat std_deviation_filter(cv::Mat visual_image);
+
+    void sharpen(cv::Mat& thermal, cv::Mat& visual, cv::Mat& dst);
+
+protected:
+    void std_deviation_filter(cv::Mat& input, Mat& output);
+
+private:
+    int radius;
+    double epsilon;
 
 };
 
