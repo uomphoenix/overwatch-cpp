@@ -38,8 +38,19 @@ void test_grayscale_jpg();
 void test_pansharpen();
 #endif
 
+char *ahost = NULL;
+int aport;
+
 int main(int argc, char *argv[])
 {
+    if (argc != 3)
+    {
+        std::cout << "Usage: " << argv[0] << " [auth ip] [auth port]" << std::endl;
+        return 1;
+    }
+    ahost = argv[1];
+    aport = atoi(argv[2]);
+
 #ifdef TEST_MODE
     //cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
     // Run a test function
@@ -69,13 +80,10 @@ void test_pansharpen()
 void test_sending()
 {
     char *ident = (char *)malloc(128);
-    char *host = (char *)malloc(128);
     strncpy(ident, "TEST", 128);
-    strncpy(host, "192.168.101.129", 128);
-    int port = 56789;
 
     VideoFeedClient *vclient = NULL;
-    AuthenticationClient *auth = new AuthenticationClient(host, port, std::string(ident));
+    AuthenticationClient *auth = new AuthenticationClient(ahost, aport, std::string(ident));
 
     try
     {
@@ -112,7 +120,7 @@ void test_sending()
             memcpy(to_send, _test.c_str(), _test.length()+1);
 
             std::cout << "Sending frame... ";
-            for (int i = 0; i < _test.length(); i++)
+            for (unsigned int i = 0; i < _test.length(); i++)
                 std::cout << (int)_test.at(i) << " ";
             std::cout << " done" << std::endl;
 
@@ -134,13 +142,10 @@ void test_sending()
 void test_send_with_video()
 {
     char *ident = (char *)malloc(128);
-    char *host = (char *)malloc(128);
     strncpy(ident, "TEST", 128);
-    strncpy(host, "192.168.101.129", 128);
-    int port = 56789;
 
     VideoFeedClient *vclient = NULL;
-    AuthenticationClient *auth = new AuthenticationClient(host, port, std::string(ident));
+    AuthenticationClient *auth = new AuthenticationClient(ahost, aport, std::string(ident));
 
     try
     {
@@ -166,28 +171,13 @@ void test_send_with_video()
         LeptonCamera *lep = new LeptonCamera();
         LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
 
-        #if HAVE_LEPTON
-        lep->initLepton();
-        #endif
-
         while (true)
         {
             lpc->getNextFrame();
             cv::Mat frame = lpc->getLatestFrame();
             vclient->send_frame(frame);
 
-            std::vector<unsigned char> buf;
-            std::vector<int> params;
-            params.push_back(CV_IMWRITE_JPEG_QUALITY);
-            params.push_back(80);
-
-            cv::imencode(std::string(".jpeg"), frame, buf, params);
-
-            cv::Mat dec = cv::imdecode(buf, -1);
-
-
             cv::imshow("Lepton", frame);
-            cv::imshow("Lepton2", dec);
 
             cv::waitKey(1);
 
@@ -204,9 +194,6 @@ void test_send_with_video()
 void test_lepton()
 {
     LeptonCamera *lep = new LeptonCamera();
-    #if HAVE_LEPTON
-    lep->initLepton();
-    #endif
 
     LeptonCameraContainer *lpc = new LeptonCameraContainer(lep);
 
@@ -228,6 +215,9 @@ void test_picam()
     cv::namedWindow("PiCam", cv::WINDOW_AUTOSIZE);
 
     raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
+    picam->set(CV_CAP_PROP_FORMAT, CV_8UC3);
+    picam->set(CV_CAP_PROP_FRAME_WIDTH, PICAM_FRAME_WIDTH);
+    picam->set(CV_CAP_PROP_FRAME_HEIGHT, PICAM_FRAME_HEIGHT);
 
     std::cout << "Opening pi cam" << std::endl;
 
@@ -237,6 +227,12 @@ void test_picam()
     }
 
     PiCameraContainer *pcc = new PiCameraContainer(picam);
+    sleep(1);
+
+    time_t start, curr;
+    time(&start);
+
+    unsigned int frames = 0;
 
     while (true)
     {
@@ -244,11 +240,13 @@ void test_picam()
         pcc->getNextFrame();
         cv::Mat frame = pcc->getLatestFrame();
 
-        //std::cout << "showing frame" << std::endl << tmp << std::endl;
+        time(&curr);
 
         cv::imshow("PiCam", frame);
 
         cv::waitKey(1);
+
+        std::cout << "PiCam frame rate: " << 1.0*frames/difftime(curr, start) << std::endl;
     }
 }
 

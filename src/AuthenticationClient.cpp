@@ -103,7 +103,7 @@ bool AuthenticationClient::authenticate()
     request[0] = '\x01';
     request[1] = '\x00';
     strncpy(request+2, identifier.c_str(), identifier.length());
-    request[request_len] = '\x00';
+    request[request_len-1] = '\x00';
 
     send_bytes(request, request_len);
     std::cout << "ident: " << identifier << std::endl;

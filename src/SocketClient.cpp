@@ -57,3 +57,13 @@ int SocketClient::read_bytes(char *buf, size_t len)
     return num_read;
 }
 
+int SocketClient::connect_sock()
+{
+    return 0;
+}
+
+int SocketClient::send_bytes(char *, size_t)
+{
+    return 0;
+}
+

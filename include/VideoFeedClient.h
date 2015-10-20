@@ -24,7 +24,7 @@ class VideoFeedClient : public SocketClient
         VideoFeedClient(char *host, int port, std::string token);
         VideoFeedClient(struct sockaddr_in *receiver_addr);
 
-        int connect_sock();
+        virtual int connect_sock();
         int send_bytes(char *bytes, size_t len);
 
         void send_frame(cv::Mat& frame);

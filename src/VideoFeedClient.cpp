@@ -47,7 +47,7 @@ VideoFeedClient::~VideoFeedClient()
 
 int VideoFeedClient::connect_sock()
 {
-
+    return 0;
 }
 
 int VideoFeedClient::send_bytes(char *bytes, size_t len)

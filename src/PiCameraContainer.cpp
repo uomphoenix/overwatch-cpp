@@ -14,6 +14,8 @@ PiCameraContainer::~PiCameraContainer()
 
 void PiCameraContainer::getNextFrame()
 {
+    // Grab the frame and then retrieve it into our Mat
+    camera->grab();
     camera->retrieve(latest_frame);
 }
 

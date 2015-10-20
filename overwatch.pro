@@ -4,6 +4,7 @@ INC_DIR = include
 # Use pkgconfig to link opencv libs & give include path,
 # `pkg-config --cflags --libs opencv`
 CONFIG += debug link_pkgconfig c++11
+CONFIG -= qt
 PKGCONFIG += opencv
 TEMPLATE = app
 TARGET = overwatch

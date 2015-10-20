@@ -15,12 +15,7 @@
 #include <linux/spi/spidev.h>
 
 #include <iostream>
-
-#include <QString>
-#include <QTextStream>
-#include <QThread>
-#include <QDebug>
-#include <QVector>
+#include <sstream>
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -31,6 +26,7 @@
 LeptonCamera::LeptonCamera()
     : result(RowPacketBytes*FrameHeight)
     , rawData(FrameWords)
+    , tx(RowPacketBytes, 0)
 {
     mode = 0;
     bits = 8;
@@ -38,18 +34,21 @@ LeptonCamera::LeptonCamera()
     speed = 16000000;
     delay = 0;
 
-    //result = new vector<unsigned char>(RowPacketBytes*FrameHeight);
-    //rawdata = new vector<unsigned short>(FrameWords);
-
-    //tx = new vector<unsigned char>(RowPacketBytes, 0);
-
     initialised = false;
+
+    #if HAVE_LEPTON
+    if (initLepton())
+    {
+        std::cout << "Successfully initialized the Lepton SPI interface" << std::endl;
+    }
+    #endif
+
+    errors = resets = 0;
 }
 
 LeptonCamera::~LeptonCamera()
 {
-    //delete result;
-    //delete rawData;
+
 }
 
 #if HAVE_LEPTON
@@ -57,19 +56,19 @@ bool LeptonCamera::initLepton()
 {
     fd = open(device, O_RDWR);
     if (fd < 0)
-        qDebug() << "Can't open device";
+        std::cout << "Can't open device" << std::endl;
     else if (-1 == ioctl(fd, SPI_IOC_WR_MODE, &mode))
-        qDebug() << "Can't set SPI mode";
+        std::cout << "Can't set SPI mode" << std::endl;
     else if (-1 == ioctl(fd, SPI_IOC_RD_MODE, &mode))
-        qDebug() << "Can't get SPI mode";
+        std::cout << "Can't get SPI mode" << std::endl;
     else if (-1 == ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits))
-        qDebug() << "Can't set bits per word";
+        std::cout << "Can't set bits per word" << std::endl;
     else if (-1 == ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits))
-        qDebug() << "Can't get bits per word";
+        std::cout << "Can't get bits per word" << std::endl;
     else if (-1 == ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed))
-        qDebug() << "Can't set max speed";
+        std::cout << "Can't set max speed" << std::endl;
     else if (-1 == ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &speed))
-        qDebug() << "Can't get max speed";
+        std::cout << "Can't get max speed" << std::endl;
     else
     {
         initialised = true;
@@ -112,15 +111,12 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
     _tr.bits_per_word = bits;
 #endif
 
-    int resets = 0; // Number of times we've reset the 0...59 loop for packets
-    int errors = 0; // Number of error-packets received
-
     int iRow;
     for (iRow = 0; iRow < FrameHeight; ) {
         unsigned char *packet = &result[iRow*RowPacketBytes];
 
         if (getPacket(iRow, packet) < 1) {
-            qDebug() << "Error transferring SPI packet";
+            std::cout << "Error transferring SPI packet" << std::endl;
             return false;
         }
 
@@ -139,12 +135,13 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
 
         if (packetNumber==-1) {
             usleep(1000);
-            return false;
+            if (++errors > 300) break;
+            continue;
         }
 
         if (packetNumber != iRow) {
             usleep(1000);
-            return false;
+            break;
         }
 
         ++iRow;
@@ -152,7 +149,9 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
 
     if (iRow < FrameHeight) {
         if (++resets >= 750) {
-            qDebug() << "Packet reset counter hit 750";
+            // If the reset counter hits 750, we should sleep and let the
+            // Lepton recover before continuing
+            std::cout << "Packet reset counter hit 750";
             resets = 0;
             usleep(750000);
         }
@@ -160,8 +159,7 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
     }
 
 #if DEBUG_LEPTON
-    QString msg;
-    QTextStream os(&msg);
+    std::stringstream os;
     bool chain = false, first = true; int chain0, chain1;
     for (std::list< std::pair<int, int> >::iterator iSeq = sequence.begin(); iSeq != sequence.end(); ++iSeq) {
         if (chain && iSeq->first==chain1+1) { ++chain1; continue; }
@@ -172,9 +170,9 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
         if (iSeq->second!=1) { os << "^" << iSeq->second; chain = false; }
     }
     if (chain && chain1!=chain0) os << "-" << chain1;
-    qDebug() << msg;
+    std::cout << os.str() << std::endl;
     sequence.clear();
-    // qDebug() << resets << "resets," << errors << "errors";
+    std::cout << resets << " resets, " << errors << " errors";
 #endif
 
     resets = 0; errors = 0;
@@ -202,12 +200,6 @@ bool LeptonCamera::getFrame(cv::Mat& frame)
             if (value > maxValue) maxValue = value;
             if (value < minValue) minValue = value;
             *(out++) = value;
-
-            // Note that this is accessing the underlying data matrix, which
-            // may not necessarily have 1:1 column stride length. Also this can
-            // go nasty if we're reaching outside the memory allocated...
-            //if (value == 0)
-            //    std::cout << "have 0 value at coord " << iRow << ", " << iCol << std::endl;
 
             fp[iCol] = value;
         }

@@ -2,7 +2,7 @@
 #define LEPTONCAMERA_H
 
 #define HAVE_LEPTON false
-#define DEBUG_LEPTON false
+#define DEBUG_LEPTON true
 
 #include <stdlib.h>
 #include <vector>
@@ -57,6 +57,9 @@ class LeptonCamera
         #if DEBUG_LEPTON
         std::list< std::pair<int, int> > sequence; // ...of packet #'s received from Lepton, for troubleshooting
         #endif
+
+        int errors; // Number of error-packets received
+        int resets; // Number of times we've reset the 0...59 loop for packets
 };
 
 class SPIUnitialisedError : public std::exception

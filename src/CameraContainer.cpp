@@ -29,3 +29,13 @@ void CameraContainer::stop()
 {
     running = false;
 }
+
+void CameraContainer::getNextFrame()
+{
+
+}
+
+cv::Mat CameraContainer::getLatestFrame()
+{
+    return cv::Mat();
+}
