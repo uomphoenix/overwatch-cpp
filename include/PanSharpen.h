@@ -12,13 +12,13 @@
 class PanSharpen
 {
 public:
-    PanSharpen();
+    PanSharpen(int radius, double epsilon);
     void read_from_disk(std::string filename);
 
     void sharpen(cv::Mat& thermal, cv::Mat& visual, cv::Mat& dst);
 
 protected:
-    void std_deviation_filter(cv::Mat& input, Mat& output);
+    void std_deviation_filter(cv::Mat& input, cv::Mat& output);
 
 private:
     int radius;
