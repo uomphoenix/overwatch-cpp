@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     std::thread lepton_thread(lpc->run);
 
     cv::Mat sharpened;
-    PanSharpen ps(10, 1);
+    PanSharpen ps(10, 1.);
     while (true)
     {
         cv::Mat thermal_frame = lpc->getLatestFrame();
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 void test_pansharpen()
 {
     //cv::namedWindow("test", CV_WINDOW_AUTOSIZE);
-    PanSharpen ps(10, 1);
+    PanSharpen ps(10, 1.);
     ps.read_from_disk(std::string("imax"));
 }
 

@@ -23,8 +23,6 @@ void PanSharpen::read_from_disk(std::string filename)
 
     Mat rgb_image = imread(rgb_path);
     Mat thermal_image = imread(thermal_path,CV_LOAD_IMAGE_GRAYSCALE);
-    Mat visual_greyscale = imread(rgb_path,CV_LOAD_IMAGE_GRAYSCALE);
-
 
     if (rgb_image.empty() || thermal_image.empty())
     {
@@ -33,7 +31,7 @@ void PanSharpen::read_from_disk(std::string filename)
     }
 
     Mat sharpened;
-    sharpen(thermal, visual, sharpened);
+    sharpen(thermal_image, rgb_image, sharpened);
 
     imshow("PS Test", sharpened);
 
@@ -53,7 +51,7 @@ void PanSharpen::sharpen(Mat& thermal, Mat& visual, Mat &output)
     Mat visual_grayscale;
     cvtColor(visual, visual_grayscale, CV_RGB2GRAY);
 
-    std_deviation_filter(visual_greyscale, std_filtered_image);
+    std_deviation_filter(visual_grayscale, std_filtered_image);
 
     filter_plus_mak = output_guided_filter + std_filtered_image;
 
