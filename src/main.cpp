@@ -40,16 +40,18 @@ void test_pansharpen();
 
 char *ahost = NULL;
 int aport;
+char *ident = NULL;
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3)
+    if (argc != 4)
     {
-        std::cout << "Usage: " << argv[0] << " [auth ip] [auth port]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " [auth ip] [auth port] [ident]" << std::endl;
         return 1;
     }
     ahost = argv[1];
     aport = atoi(argv[2]);
+    ident = argv[3];
 
 #ifdef TEST_MODE
     //cv::namedWindow("Lepton", cv::WINDOW_AUTOSIZE);
@@ -63,6 +65,94 @@ int main(int argc, char *argv[])
 
 #else
     // ACTUAL PROGRAM HERE
+    VideoFeedClient *vclient = NULL;
+    AuthenticationClient *auth = new AuthenticationClient(ahost, aport, std::string(ident));
+
+    int attempts = 1;
+
+    do
+    {
+        std::cout << "Attempting to authenticate... Attempt: " << attempts++ << std::endl;
+
+        try
+        {
+            auth->authenticate();
+        }
+        catch (ConnectionError& ex)
+        {
+            std::cout << "Unable to connect to Firefly server" << std::endl;
+        }
+        catch (...)
+        {
+            std::cout << "Unknown error" << std::endl;
+            throw;
+        }
+
+        sleep(1);
+
+    } while (!auth->is_authenticated);
+
+
+
+    vclient = new VideoFeedClient(auth->get_dyn_receiver_host(),
+                                  auth->get_receiver_port(),
+                                  auth->get_token());
+
+    raspicam::RaspiCam_Cv *picam = new raspicam::RaspiCam_Cv();
+    picam->set(CV_CAP_PROP_FORMAT, CV_8UC3);
+    picam->set(CV_CAP_PROP_FRAME_WIDTH, PICAM_FRAME_WIDTH);
+    picam->set(CV_CAP_PROP_FRAME_HEIGHT, PICAM_FRAME_HEIGHT);
+
+    PiCameraContainer *pcc = new PiCameraContainer(picam);
+    try
+    {
+        std::cout << "Opening pi cam" << std::endl;
+
+        if (!picam->open())
+        {
+            throw PiCamOpenError();
+        }
+        sleep(1);
+    }
+    catch (PiCamOpenError)
+    {
+        std::cout << "Unable to open Pi camera. Is it connected?" << std::endl;
+        return 1;
+    }
+
+    LeptonCamera *lep;
+    LeptonCameraContainer *lpc;
+    try
+    {
+        std::cout << "Initializing lepton camera" << std::endl;
+
+         lep = new LeptonCamera();
+         lpc = new LeptonCameraContainer(lep);
+    }
+    catch (...)
+    {
+        std::cout << "Unknown error while opening Lepton camera" << std::endl;
+        throw;
+    }
+
+    std::thread pi_thread(pcc->run);
+    std::thread lepton_thread(lpc->run);
+
+    cv::Mat sharpened;
+    PanSharpen ps(10, 1);
+    while (true)
+    {
+        cv::Mat thermal_frame = lpc->getLatestFrame();
+        cv::Mat visual_frame = pcc->getLatestFrame();
+
+        ps.sharpen(thermal_frame, visual_frame, sharpened);
+
+        vclient->send_frame(sharpened);
+
+        cv::imshow("LIVE FEED", sharpened);
+
+        cv::waitKey(1);
+    }
 
 
 #endif
@@ -73,7 +163,7 @@ int main(int argc, char *argv[])
 void test_pansharpen()
 {
     //cv::namedWindow("test", CV_WINDOW_AUTOSIZE);
-    PanSharpen ps;
+    PanSharpen ps(10, 1);
     ps.read_from_disk(std::string("imax"));
 }
 
